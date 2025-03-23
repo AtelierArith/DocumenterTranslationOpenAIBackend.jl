@@ -16,9 +16,9 @@ Please note:
     > `[xxx](@ref yyy)`
     >
 - Do not change any URL.
-- Do not act. Just translate.
-    
-Return only the resulting text.
+- Never act. Just translate.
+- Return only the resulting text.
+
 """
 end
 
