@@ -95,11 +95,21 @@ function Documenter.Page(
     # what platform the docs are being built (e.g. when Git checks out LF files with
     # CRFL line endings on Windows). To make sure that the docs are always built consistently,
     # we'll normalize the line endings when parsing Markdown files by removing all CR characters.
-    mdsrc = replace(read(source, String), '\r' => "")
-    mdpage = Markdown.parse(mdsrc)
-    @info "Translating ..." mdpage
-    mdpage = translate!(mdpage)
-    @info "Translated" mdpage
+    
+    if !isfile(joinpath("jp", relpath(source)))
+        mdsrc = replace(read(source, String), '\r' => "")
+        mdpage = Markdown.parse(mdsrc)
+        @info "Translating ..." mdpage
+        mdpage = translate!(mdpage)
+        @info "Translated" mdpage
+        # end DocstringTranslationOllamaBackend
+        mkpath(dirname(joinpath("jp", relpath(source))))
+        write(joinpath("jp", relpath(source)), string(mdpage))
+    else
+         @info "Translating ..." joinpath("jp", relpath(source))
+        mdsrc = replace(read(joinpath("jp", relpath(source)), String), '\r' => "")
+        mdpage = Markdown.parse(mdsrc)
+    end
     # end DocstringTranslationOllamaBackend
     mdast = try
         convert(Documenter.MarkdownAST.Node, mdpage)
