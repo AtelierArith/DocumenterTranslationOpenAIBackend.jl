@@ -1,0 +1,4 @@
+name = "DocumenterTranslationOpenAIBackend"
+uuid = "17b60fd1-177d-4bcf-9fc0-e48366d566e1"
+authors = ["SatoshiTerasaki <terasakisatoshi.math@gmail.com>"]
+version = "0.1.0"
