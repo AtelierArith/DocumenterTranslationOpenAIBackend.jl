@@ -31,7 +31,7 @@ function translate_docstring_with_openai(doc::Union{Markdown.MD,AbstractString})
     translate_with_openai(doc; system_promptfn = default_docstring_system_promptfn)
 end
 
-function default_documenter_md_system_pronptfn(lang)
+function default_documenter_md_system_promptfn(lang)
     return """
 Translate the Markdown content or text I'll paste later into $(lang).
 
