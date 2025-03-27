@@ -22,6 +22,7 @@ macro switchlang!(lang)
             md.meta[:path] = d.data[:path]
             d.object = md
         end
+        cache_original(d.object)
         hash = hashmd(d.object)
         if istranslated(d.object)
             transmd = load_translation(hash)
