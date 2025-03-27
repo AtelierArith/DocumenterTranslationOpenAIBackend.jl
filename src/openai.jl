@@ -95,6 +95,7 @@ function _translate!(p::Markdown.Paragraph)
                         _c = hex2link[c.code]
                         delete!(hex2link, c.code)
                         c = _c
+                        c
                     else
                         c
                     end
