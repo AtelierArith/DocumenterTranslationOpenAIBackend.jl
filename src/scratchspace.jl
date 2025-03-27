@@ -12,6 +12,12 @@ function load_translation(hash::String)
     )
 end
 
+function cache_original(md::Markdown.MD)
+    cachedir = TRANSLATION_CACHE_DIR[]
+    mkpath(joinpath(cachedir, hashmd(md)))
+    write(joinpath(cachedir, hashmd(md), "original.md"), string(md))
+end
+
 function cache_translation(hash::String, transmd::Markdown.MD)
     cachedir = TRANSLATION_CACHE_DIR[]
     lang = DEFAULT_LANG[]

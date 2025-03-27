@@ -48,6 +48,7 @@ macro switchlang!(lang)
 
         mdsrc = replace(read(source, String), '\r' => "")
         mdpage = Markdown.parse(mdsrc)
+        cache_original(mdpage)
         @info "Translating ..." mdpage
         hashvalue = hashmd(mdpage)
         if !istranslated(mdpage)
