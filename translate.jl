@@ -1,4 +1,5 @@
-using DotEnv; DotEnv.load!()
+using DotEnv;
+DotEnv.load!();
 using DocstringTranslation
 DocstringTranslation.DEFAULT_MODEL[] = "gpt-3.5-turbo"
 @switchlang! :Japanese
@@ -23,9 +24,7 @@ Please note:
 end
 
 function translate!(p::Markdown.Paragraph)
-    result = translate_with_openai(
-        Markdown.MD(p); system_promptfn=system_promptfn
-    )
+    result = translate_with_openai(Markdown.MD(p); system_promptfn = system_promptfn)
     try
         p.content = result[1].content
     catch
