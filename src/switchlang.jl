@@ -34,7 +34,7 @@ macro switchlang!(lang)
     end
 
     # Overrides Page constructor to hack Documenter to translate docstrings
-    function Documenter.Page(
+    @eval function Documenter.Page(
         source::AbstractString,
         build::AbstractString,
         workdir::AbstractString,
@@ -45,10 +45,19 @@ macro switchlang!(lang)
         # what platform the docs are being built (e.g. when Git checks out LF files with
         # CRFL line endings on Windows). To make sure that the docs are always built consistently,
         # we'll normalize the line endings when parsing Markdown files by removing all CR characters.
+
         mdsrc = replace(read(source, String), '\r' => "")
         mdpage = Markdown.parse(mdsrc)
         @info "Translating ..." mdpage
-        mdpage = translate_md!(mdpage)
+        hashvalue = hashmd(mdpage)
+        if !istranslated(mdpage)
+            # Update mdpage object
+            mdpage = translate_md!(mdpage)
+            # end DocstringTranslationOllamaBackend
+            cache_translation(hashvalue, mdpage)
+        else
+            mdpage = load_translation(hashvalue)
+        end
         @info "Translated" mdpage
         # end DocstringTranslationOllamaBackend
         mdast = try
@@ -60,8 +69,6 @@ macro switchlang!(lang)
             """
             rethrow(err)
         end
-        mkpath(dirname(joinpath("jp", relpath(source))))
-        write(joinpath("jp", relpath(source)), string(mdpage))
         return Documenter.Page(
             source,
             build,
