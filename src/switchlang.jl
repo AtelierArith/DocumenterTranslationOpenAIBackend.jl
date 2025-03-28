@@ -3,18 +3,12 @@ function _switchlang!(lang::Union{String,Symbol})
     DEFAULT_LANG[] = String(lang)
 end
 
-function _switchlang!(node::QuoteNode)
-    lang = node.value
-    _switchlang!(lang)
-end
-
 """
 	@switchlang!(lang)
 
 Modify Docs.parsedoc(d::DocStr) to insert translation engine.
 """
 macro switchlang!(lang)
-    _switchlang!(lang)
     @eval function Docs.parsedoc(d::DocStr)
         if d.object === nothing
             md = Docs.formatdoc(d)
@@ -79,5 +73,9 @@ macro switchlang!(lang)
             Documenter.Globals(),
             mdast,
         )
+    end
+    quote
+        local _lang = $(esc(lang))
+        _switchlang!(_lang)
     end
 end
