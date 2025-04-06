@@ -12,10 +12,10 @@ using OpenAI
 
 const DEFAULT_LANG = Ref{String}()
 const TRANSLATION_CACHE_DIR = Ref{String}()
+const SCRATCH_NAME = Ref{String}()
 
 include("util.jl")
 include("scratchspace.jl")
-
 include("openai.jl")
 export swithcmodel!
 
@@ -24,7 +24,8 @@ export @switchlang!
 
 function __init__()
     scratch_name = "translation-$(VERSION.major).$(VERSION.minor)"
-    global TRANSLATION_CACHE_DIR[] = @get_scratch!(scratch_name)
+    SCRATCH_NAME[] = scratch_name
+    global TRANSLATION_CACHE_DIR[] = @get_scratch!(SCRATCH_NAME[])
 end
 
 end # module DocumenterTranslationOpenAIBackend
