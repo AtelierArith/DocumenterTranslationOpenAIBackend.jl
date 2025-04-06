@@ -23,7 +23,8 @@ include("switchlang.jl")
 export @switchlang!
 
 function __init__()
-    global TRANSLATION_CACHE_DIR[] = @get_scratch!("translation")
+    scratch_name = "translation-$(VERSION.major).$(VERSION.minor)"
+    global TRANSLATION_CACHE_DIR[] = @get_scratch!(scratch_name)
 end
 
 end # module DocumenterTranslationOpenAIBackend
