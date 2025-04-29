@@ -17,9 +17,9 @@ function default_docstring_system_promptfn(lang = default_lang())
 Translate the Markdown content I'll paste later into $(lang).
 
 Please note:
-- Do not alter the Julia markdown formatting.
-- Do not change code fence such as jldoctest or math.
-- Do not change words in the form of `[xxx](@ref)`.
+- Never alter the Julia markdown formatting.
+- Never change code fence such as jldoctest or math.
+- Skip changing words in the form of `[xxx](@ref)` or `[xxx](@ref yyy)`.
 - Do not change any URL.
 - If $(lang) indicates English (e.g., "en"), return the input unchanged.
 
