@@ -14,21 +14,25 @@ macro switchlang!(lang)
             md = Docs.formatdoc(d)
             md.meta[:module] = d.data[:module]
             md.meta[:path] = d.data[:path]
-            cache_original(md)
-            hash = hashmd(md)
-            md = if istranslated(md)
-                translated_md = load_translation(hash)
-                translated_md
-            else
-                translated_md = translate_docstring_with_openai(md)
-                cache_translation(hash, translated_md)
-                translated_md
-            end
-            # set meta again
-            md.meta[:module] = d.data[:module]
-            md.meta[:path] = d.data[:path]
+            begin # hack
+                md_hash_original = hashmd(md)
+                cache_original(md)
+                translated_md = if istranslated(md)
+                    translated_md = load_translation(md)
+                    translated_md.meta[:module] = d.data[:module]
+                    translated_md.meta[:path] = d.data[:path]
+                    translated_md
+                else
+                    translated_md = translate_docstring_with_openai(md)
+                    translated_md.meta[:module] = d.data[:module]
+                    translated_md.meta[:path] = d.data[:path]
+                    cache_translation(md_hash_original, translated_md)
+                    # set meta again
+                    translated_md
+                end
+                md = translated_md
+            end # hack
             d.object = md
-            md
         end
         d.object
     end
@@ -48,19 +52,20 @@ macro switchlang!(lang)
 
         mdsrc = replace(read(source, String), '\r' => "")
         mdpage = Markdown.parse(mdsrc)
-        cache_original(mdpage)
-        @info "Translating ..." mdpage
-        hashvalue = hashmd(mdpage)
-        if !istranslated(mdpage)
-            # Update mdpage object
-            mdpage = translate_md!(mdpage)
-            # end DocstringTranslationOllamaBackend
-            cache_translation(hashvalue, mdpage)
-        else
-            mdpage = load_translation(hashvalue)
-        end
-        @info "Translated" mdpage
-        # end DocstringTranslationOllamaBackend
+        begin # hack
+            cache_original(mdpage)
+            @info "Translating ..." mdpage
+            mdhash_original = hashmd(mdpage)
+            if !istranslated(mdpage)
+                # Update mdpage object
+                mdpage = translate_md!(mdpage)
+                # end DocstringTranslationOllamaBackend
+                cache_translation(mdhash_original, mdpage)
+            else
+                mdpage = load_translation(mdhash_original)
+            end
+            @info "Translated" mdpage
+        end # hack
         mdast = try
             convert(Documenter.MarkdownAST.Node, mdpage)
         catch err
@@ -79,6 +84,7 @@ macro switchlang!(lang)
             mdast,
         )
     end
+
     quote
         local _lang = $(esc(lang))
         _switchlang!(_lang)

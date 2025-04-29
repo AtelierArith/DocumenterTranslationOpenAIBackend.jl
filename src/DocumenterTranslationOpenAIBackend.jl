@@ -23,7 +23,7 @@ include("switchlang.jl")
 export @switchlang!
 
 function __init__()
-    scratch_name = "translation-$(VERSION.major).$(VERSION.minor)"
+    scratch_name = "translation"
     SCRATCH_NAME[] = scratch_name
     global TRANSLATION_CACHE_DIR[] = @get_scratch!(SCRATCH_NAME[])
 end
