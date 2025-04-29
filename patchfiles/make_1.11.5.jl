@@ -15,6 +15,17 @@ using DocumenterTranslationOpenAIBackend
 lang = "ja"
 @switchlang! lang
 
+for (i, _stdlib) in enumerate(readdir(Sys.STDLIB))
+	stdlib = Symbol(_stdlib)
+    @info "Translating docstrings in $(stdlib)"
+	@eval begin
+		import $(stdlib)
+		Base.Threads.@threads for n in names($(stdlib))
+			(Base.Docs.doc)((Base.Docs.Binding)($(stdlib), n))
+		end
+	end
+end
+
 import LibGit2
 
 baremodule GenStdLib end
