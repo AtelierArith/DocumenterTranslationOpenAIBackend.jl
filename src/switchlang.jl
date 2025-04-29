@@ -52,19 +52,20 @@ macro switchlang!(lang)
 
         mdsrc = replace(read(source, String), '\r' => "")
         mdpage = Markdown.parse(mdsrc)
-        cache_original(mdpage)
-        @info "Translating ..." mdpage
-        hashvalue = hashmd(mdpage)
-        if !istranslated(mdpage)
-            # Update mdpage object
-            mdpage = translate_md!(mdpage)
-            # end DocstringTranslationOllamaBackend
-            cache_translation(hashvalue, mdpage)
-        else
-            mdpage = load_translation(hashvalue)
-        end
-        @info "Translated" mdpage
-        # end DocstringTranslationOllamaBackend
+        begin # hack
+            cache_original(mdpage)
+            @info "Translating ..." mdpage
+            mdhash_original = hashmd(mdpage)
+            if !istranslated(mdpage)
+                # Update mdpage object
+                mdpage = translate_md!(mdpage)
+                # end DocstringTranslationOllamaBackend
+                cache_translation(mdhash_original, mdpage)
+            else
+                mdpage = load_translation(mdhash_original)
+            end
+            @info "Translated" mdpage
+        end # hack
         mdast = try
             convert(Documenter.MarkdownAST.Node, mdpage)
         catch err
@@ -83,6 +84,7 @@ macro switchlang!(lang)
             mdast,
         )
     end
+
     quote
         local _lang = $(esc(lang))
         _switchlang!(_lang)
