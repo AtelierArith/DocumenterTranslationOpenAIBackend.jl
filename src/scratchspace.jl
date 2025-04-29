@@ -1,26 +1,28 @@
 function istranslated(md::Markdown.MD)
-    cachedir = TRANSLATION_CACHE_DIR[]
+    cachedir = joinpath(TRANSLATION_CACHE_DIR[], hashmd(md))
     lang = DEFAULT_LANG[]
-    isfile(joinpath(cachedir, hashmd(md), lang * ".md"))
+    mdpath = joinpath(cachedir, lang * ".md")
+    isfile(mdpath)
 end
 
 function load_translation(hash::String)
-    cachedir = TRANSLATION_CACHE_DIR[]
+    cachedir = joinpath(TRANSLATION_CACHE_DIR[], hash)
     lang = DEFAULT_LANG[]
-    Markdown.parse(
-        postprocess_content(read(joinpath(cachedir, hash, lang * ".md"), String)),
-    )
+    mdpath = joinpath(cachedir, lang * ".md")
+    Markdown.parse(postprocess_content(read(mdpath, String)))
 end
 
 function cache_original(md::Markdown.MD)
-    cachedir = TRANSLATION_CACHE_DIR[]
-    mkpath(joinpath(cachedir, hashmd(md)))
-    write(joinpath(cachedir, hashmd(md), "original.md"), string(md))
+    cachedir = joinpath(TRANSLATION_CACHE_DIR[], hashmd(md))
+    mkpath(cachedir)
+    mdpath = joinpath(cachedir, "original.md")
+    write(mdpath, string(md))
 end
 
 function cache_translation(hash::String, transmd::Markdown.MD)
-    cachedir = TRANSLATION_CACHE_DIR[]
+    cachedir = joinpath(TRANSLATION_CACHE_DIR[], hash)
     lang = DEFAULT_LANG[]
-    mkpath(joinpath(cachedir, hash))
-    write(joinpath(cachedir, hash, lang * ".md"), string(transmd))
+    mdpath = joinpath(cachedir, lang * ".md")
+    mkpath(cachedir)
+    write(mdpath, string(transmd))
 end

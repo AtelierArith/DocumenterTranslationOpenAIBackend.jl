@@ -14,18 +14,23 @@ macro switchlang!(lang)
             md = Docs.formatdoc(d)
             md.meta[:module] = d.data[:module]
             md.meta[:path] = d.data[:path]
+            cache_original(md)
+            hash = hashmd(md)
+            md = if istranslated(md)
+                translated_md = load_translation(hash)
+                translated_md
+            else
+                translated_md = translate_docstring_with_openai(md)
+                cache_translation(hash, translated_md)
+                translated_md
+            end
+            # set meta again
+            md.meta[:module] = d.data[:module]
+            md.meta[:path] = d.data[:path]
             d.object = md
+            md
         end
-        cache_original(d.object)
-        hash = hashmd(d.object)
-        if istranslated(d.object)
-            transmd = load_translation(hash)
-            return transmd
-        else
-            transmd = translate_docstring_with_openai(d.object)
-            cache_translation(hash, transmd)
-            return transmd
-        end
+        d.object
     end
 
     # Overrides Page constructor to hack Documenter to translate docstrings
