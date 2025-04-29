@@ -109,7 +109,7 @@ function _translate!(p::Markdown.Paragraph)
         if isempty(hex2link)
             p.content = translated_content
         else
-            @warn "Failed to translate by hex2link"
+            @warn "Failed to translate by hex2link. Fallback to original content"
             p.content = p_orig.content
         end
     catch e

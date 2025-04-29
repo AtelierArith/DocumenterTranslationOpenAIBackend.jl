@@ -1,10 +1,23 @@
 function pathofcachedir(md::Markdown.MD)
-	s = split(string(md.meta[:module]), ".")
-	v = something(pkgversion(md.meta[:module]), VERSION)
-	major = v.major
-	minor = v.minor
-	insert!(s, 2, "$(major).$(minor)")
-	joinpath(TRANSLATION_CACHE_DIR[], s...)
+    if haskey(md.meta, :module)
+        svec = split(string(md.meta[:module]), ".")
+        v = something(pkgversion(md.meta[:module]), VERSION)
+        major = v.major
+        minor = v.minor
+        insert!(svec, 2, "$(major).$(minor)")
+        joinpath(TRANSLATION_CACHE_DIR[], svec...)
+    elseif haskey(md.meta, :path)
+        # In case the module is not set.
+        # This happens when we translate markdown in doc/src/<blah>.md
+        svec = splitpath(md.meta[:path])
+        v = VERSION
+        major = v.major
+        minor = v.minor
+        insert!(svec, 2, "$(major).$(minor)")
+        joinpath(TRANSLATION_CACHE_DIR[], svec...)
+    else
+        return TRANSLATION_CACHE_DIR[]
+    end
 end
 
 function istranslated(md::Markdown.MD)

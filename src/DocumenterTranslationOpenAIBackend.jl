@@ -12,7 +12,11 @@ using OpenAI
 
 const DEFAULT_LANG = Ref{String}()
 const TRANSLATION_CACHE_DIR = Ref{String}()
-const SCRATCH_NAME = Ref{String}()
+const TARGET_PACKAGE = Ref{String}()
+
+function switchtargetpackage!(pkg)
+    TARGET_PACKAGE[] = string(pkg)
+end
 
 include("util.jl")
 include("scratchspace.jl")
@@ -24,8 +28,8 @@ export @switchlang!
 
 function __init__()
     scratch_name = "translation"
-    SCRATCH_NAME[] = scratch_name
-    global TRANSLATION_CACHE_DIR[] = @get_scratch!(SCRATCH_NAME[])
+    TARGET_PACKAGE[] = "julia"
+    global TRANSLATION_CACHE_DIR[] = @get_scratch!(scratch_name)
 end
 
 end # module DocumenterTranslationOpenAIBackend
