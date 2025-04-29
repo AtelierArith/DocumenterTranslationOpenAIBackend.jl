@@ -14,21 +14,25 @@ macro switchlang!(lang)
             md = Docs.formatdoc(d)
             md.meta[:module] = d.data[:module]
             md.meta[:path] = d.data[:path]
-            cache_original(md)
-            hash = hashmd(md)
-            md = if istranslated(md)
-                translated_md = load_translation(hash)
-                translated_md
-            else
-                translated_md = translate_docstring_with_openai(md)
-                cache_translation(hash, translated_md)
-                translated_md
-            end
-            # set meta again
-            md.meta[:module] = d.data[:module]
-            md.meta[:path] = d.data[:path]
+            begin # hack
+                md_hash_original = hashmd(md)
+                cache_original(md)
+                translated_md = if istranslated(md)
+                    translated_md = load_translation(md)
+                    translated_md.meta[:module] = d.data[:module]
+                    translated_md.meta[:path] = d.data[:path]
+                    translated_md
+                else
+                    translated_md = translate_docstring_with_openai(md)
+                    translated_md.meta[:module] = d.data[:module]
+                    translated_md.meta[:path] = d.data[:path]
+                    cache_translation(md_hash_original, translated_md)
+                    # set meta again
+                    translated_md
+                end
+                md = translated_md
+            end # hack
             d.object = md
-            md
         end
         d.object
     end
