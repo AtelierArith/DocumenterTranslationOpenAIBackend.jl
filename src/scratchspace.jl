@@ -2,7 +2,7 @@ function prevminor(v::VersionNumber)
     return VersionNumber(v.major, v.minor - 1, 0)
 end
 
-function insertversion(svec::Vector{String}, v::VersionNumber)
+function insertversion(svec::AbstractVector, v::VersionNumber)
     major = v.major
     minor = v.minor
     insert!(deepcopy(svec), 2, "$(major).$(minor)")
