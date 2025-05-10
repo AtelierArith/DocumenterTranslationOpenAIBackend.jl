@@ -1,0 +1,4 @@
+using ReTestItems
+using DocumenterTranslationOpenAIBackend
+
+ReTestItems.runtests(DocumenterTranslationOpenAIBackend)
