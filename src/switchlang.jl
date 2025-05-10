@@ -64,7 +64,6 @@ macro switchlang!(lang)
             if !istranslated(mdpage)
                 # Update mdpage object
                 mdpage = translate_md!(mdpage)
-                # end DocstringTranslationOllamaBackend
                 cache_translation(mdhash_original, mdpage)
             else
                 mdpage = load_translation(mdpage)

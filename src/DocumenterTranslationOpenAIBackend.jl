@@ -21,7 +21,6 @@ end
 include("util.jl")
 include("scratchspace.jl")
 include("openai.jl")
-export swithcmodel!
 
 include("switchlang.jl")
 export @switchlang!
