@@ -59,7 +59,7 @@ macro switchlang!(lang)
             target_package = DOCUMENTER_TARGET_PACKAGE[]
             mdpage.meta[:path] = joinpath(target_package, first(splitext(source)))
             cache_original(mdpage)
-            @info "Translating ..." mdpage
+            @debug "Translating ..." mdpage
             mdhash_original = hashmd(mdpage)
             if !istranslated(mdpage)
                 # Update mdpage object
@@ -68,7 +68,7 @@ macro switchlang!(lang)
             else
                 mdpage = load_translation(mdpage)
             end
-            @info "Translated" mdpage
+            @debug "Translated" mdpage
         end # hack
         mdast = try
             convert(Documenter.MarkdownAST.Node, mdpage)
