@@ -50,9 +50,6 @@ macro switchlang!(lang)
         # CRFL line endings on Windows). To make sure that the docs are always built consistently,
         # we'll normalize the line endings when parsing Markdown files by removing all CR characters.
 
-        @info source
-        @info workdir
-        @info build
         mdsrc = replace(read(source, String), '\r' => "")
         mdpage = Markdown.parse(mdsrc)
         begin # hack
