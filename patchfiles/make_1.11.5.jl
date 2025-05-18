@@ -10,7 +10,8 @@ Pkg.instantiate()
 
 using Documenter
 
-using DotEnv; DotEnv.load!()
+# using DotEnv; DotEnv.load!()
+
 using DocumenterTranslationOpenAIBackend
 DocumenterTranslationOpenAIBackend.TRANSLATION_CACHE_DIR[]=joinpath(
     dirname(dirname(@__DIR__)), "translation"
